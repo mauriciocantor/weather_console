@@ -1,11 +1,18 @@
 import inquirer from "./helpers/inquirer.js";
+import Find from "./models/find.js";
+
 const main = async() => {
     let opt;
+    const find = new Find();
+
     do {
         opt = await inquirer.inquirerMenu();
         switch (opt){
             case 1:
-                console.log('Buscador');
+                let city = await inquirer.leerInput('Ingrese la ciudad a buscar: ');
+
+                await find.findPlace(city);
+
                 break;
             case 2:
                 console.log('historial');
