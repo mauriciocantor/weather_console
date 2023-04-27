@@ -4,21 +4,30 @@ export default class Find {
     _axiosInstance;
     constructor() {
          this._axiosInstance = axios.create({
-            baseURL: 'https://reqres.in/api/',
-            timeout: 10000
+            baseURL: 'https://api.mapbox.com/geocoding/v5/mapbox.places/',
+            timeout: 10000,
+            params: this.paramsMapbox
         });
 
     }
 
+    get paramsMapbox() {
+        return {
+            proximity: 'ip',
+            language: 'es',
+            types: 'place',
+            limit: 5,
+            access_token: process.env.MAPBOX_KEY
+        };
+    }
+
     async findPlace(city){
-        let response = await this._axiosInstance.get('users?page=2');
-        console.log(response.data);
-        // console.log(`Ciudad: `);
-        // console.log(`Lat: `);
-        // console.log(`Lon: `);
-        // console.log(`Temperatura: `);
-        // console.log(`Minima: `);
-        // console.log(`Maxima: `);
-        return [];
+        let {data} = await this._axiosInstance.get(`${city}.json`);
+        return data.features.map(place=>({
+            id: place.id,
+            name: place.place_name,
+            lng:place.center[0],
+            lat:place.center[1]
+        }));
     }
 }
